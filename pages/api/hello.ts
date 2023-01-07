@@ -4,7 +4,7 @@ import type { NextApiRequest, NextApiResponse } from 'next'
 type Data = Awaited<ReturnType<typeof fetcher>>
 
 function fetcher () {
-  return twitter.tweets.findTweetById("20");
+  return twitter.tweets.findTweetById('20');
 }
 
 export default async function handler(
