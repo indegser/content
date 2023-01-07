@@ -4,5 +4,7 @@ namespace NodeJS {
   interface ProcessEnv {
     TWITTER_BEARER_TOKEN: string;
     TWITTER_USER_ID: string;
+    NEXT_PUBLIC_SUPABASE_ANON_KEY: string;
+    NEXT_PUBLIC_SUPABASE_URL: string;
   }
 }
