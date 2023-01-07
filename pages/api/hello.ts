@@ -1,9 +1,9 @@
 import { twitter } from '@src/sdks/twitter';
-import type { NextApiRequest, NextApiResponse } from 'next'
+import type { NextApiRequest, NextApiResponse } from 'next';
 
-type Data = Awaited<ReturnType<typeof fetcher>>
+type Data = Awaited<ReturnType<typeof fetcher>>;
 
-function fetcher () {
+function fetcher() {
   return twitter.tweets.findTweetById('20');
 }
 
@@ -12,5 +12,5 @@ export default async function handler(
   res: NextApiResponse<Data>
 ) {
   const tweet = await fetcher();
-  res.status(200).json(tweet)
+  res.status(200).json(tweet);
 }
