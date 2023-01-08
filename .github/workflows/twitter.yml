@@ -10,4 +10,4 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: cURL request
-        run: curl -X POST -d {} https://content.indegser.com/api/hello
+        run: curl https://content.indegser.com/api/hello
