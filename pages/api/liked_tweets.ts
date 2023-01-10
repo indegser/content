@@ -5,7 +5,7 @@ import type { NextApiRequest, NextApiResponse } from 'next';
 
 type Data = string[];
 
-function fetcher() {
+function fetchFromTwitter() {
   return twitter.tweets.usersIdLikedTweets(process.env.TWITTER_USER_ID, {
     expansions: ['author_id'],
     'user.fields': ['description'],
@@ -13,7 +13,7 @@ function fetcher() {
   });
 }
 
-async function fetchLatestTweetDataInNotion() {
+async function fetchFromNotion() {
   const { results } = await notion.databases.query({
     database_id: '57dae7d18f6d4045956e894a03d6c81f',
     page_size: 100,
@@ -35,17 +35,14 @@ export default async function handler(
   req: NextApiRequest,
   res: NextApiResponse<Data>
 ) {
-  /**
-   * 가장 최근에 저장된 데이터
-   */
-  const ids = await fetchLatestTweetDataInNotion();
-  const tweet = await fetcher();
+  const ids = await fetchFromNotion();
+  const { data: tweets = [], includes } = await fetchFromTwitter();
 
-  const newLikes =
-    tweet.data?.filter((tweet) => {
-      return !ids.includes(tweet.id);
-    }) || [];
-  const users = tweet.includes?.users || [];
+  const newLikes = tweets.filter((tweet) => {
+    return !ids.includes(tweet.id);
+  });
+
+  const users = includes?.users || [];
 
   const now = Date.now();
   const result = newLikes.map((tweet, i) => {
