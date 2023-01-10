@@ -3,7 +3,7 @@ import { notion } from '@src/sdks/notion';
 import { twitter } from '@src/sdks/twitter';
 import type { NextApiRequest, NextApiResponse } from 'next';
 
-type Data = Awaited<ReturnType<typeof fetcher>>;
+type Data = string[];
 
 function fetcher() {
   return twitter.tweets.usersIdLikedTweets(process.env.TWITTER_USER_ID, {
@@ -43,7 +43,6 @@ export default async function handler(
 
   const newLikes =
     tweet.data?.filter((tweet) => {
-      console.log(tweet.id, ids.includes(tweet.id));
       return !ids.includes(tweet.id);
     }) || [];
   const users = tweet.includes?.users || [];
@@ -82,5 +81,5 @@ export default async function handler(
     return data;
   });
 
-  res.status(200).json(result as unknown as Data);
+  res.status(200).json(result.map((item) => item.id));
 }
