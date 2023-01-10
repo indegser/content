@@ -57,7 +57,7 @@ export default async function handler(
       created_at,
     };
 
-    notion.pages.create({
+    return notion.pages.create({
       parent: { database_id: '57dae7d18f6d4045956e894a03d6c81f' },
       properties: {
         ID: {
@@ -74,9 +74,8 @@ export default async function handler(
         },
       },
     });
-
-    return data;
   });
 
-  res.status(200).json(result.map((item) => item.id));
+  const results = await Promise.all(result);
+  res.status(200).json(results.map((item) => item.id));
 }
