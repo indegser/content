@@ -24,12 +24,18 @@ export default async function handler(
     return notion.pages.create({
       parent: { database_id: '22bb63060d624e398960b42c7afb7348' },
       cover: {
-        type: 'external',
         external: { url: item.snippet.thumbnails?.maxres?.url || '' },
       },
       properties: {
-        title: [{ text: { content: item.snippet.title || '' } }],
-        Description: [{ text: { content: item.snippet.description || '' } }],
+        Title: { title: [{ text: { content: item.snippet.title || '' } }] },
+        Description: {
+          rich_text: [{ text: { content: item.snippet.description || '' } }],
+        },
+        PublishedAt: {
+          date: {
+            start: item.snippet.publishedAt!,
+          },
+        },
       },
     });
   });
