@@ -1,6 +1,6 @@
-import { isFullPage } from '@notionhq/client';
 import { notion } from '@src/sdks/notion';
 import { youtube } from '@src/sdks/youtube';
+import { notionUtils } from '@src/utils/notion';
 import { NextApiRequest, NextApiResponse } from 'next';
 
 type Data = object;
@@ -19,15 +19,7 @@ async function fetchFromNotion() {
     sorts: [{ property: 'PublishedAt', direction: 'descending' }],
   });
 
-  return results
-    .map((result) => {
-      if (!result || !isFullPage(result)) return;
-
-      if (result.properties.Title['type'] !== 'title') return;
-
-      return result.properties.Title.title?.[0].plain_text;
-    })
-    .filter(Boolean) as string[];
+  return notionUtils.getTitleList(results);
 }
 
 export default async function handler(

@@ -1,6 +1,6 @@
-import { isFullPage } from '@notionhq/client';
 import { notion } from '@src/sdks/notion';
 import { twitter } from '@src/sdks/twitter';
+import { notionUtils } from '@src/utils/notion';
 import type { NextApiRequest, NextApiResponse } from 'next';
 
 type Data = string[];
@@ -20,15 +20,7 @@ async function fetchFromNotion() {
     sorts: [{ property: 'Index', direction: 'descending' }],
   });
 
-  return results
-    .map((result) => {
-      if (!result || !isFullPage(result)) return;
-
-      if (result.properties.ID['type'] !== 'title') return;
-
-      return result.properties.ID.title?.[0].plain_text;
-    })
-    .filter(Boolean) as string[];
+  return notionUtils.getTitleList(results);
 }
 
 export default async function handler(
