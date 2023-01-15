@@ -46,7 +46,11 @@ export default async function handler(
       properties: {
         Title: { title: [{ text: { content: item.snippet.title || '' } }] },
         Description: {
-          rich_text: [{ text: { content: item.snippet.description || '' } }],
+          rich_text: [
+            {
+              text: { content: item.snippet.description?.slice(0, 2000) || '' },
+            },
+          ],
         },
         PublishedAt: {
           date: {
