@@ -1,6 +1,7 @@
 import { notion } from '@src/sdks/notion';
 import { youtube } from '@src/sdks/youtube';
 import { notionUtils } from '@src/utils/notion';
+import { youtube_v3 } from 'googleapis';
 import { NextApiRequest, NextApiResponse } from 'next';
 
 type Data = object;
@@ -22,6 +23,21 @@ async function fetchFromNotion() {
   return notionUtils.getTitleList(results);
 }
 
+function getThumbnailUrl(
+  thumbnails: youtube_v3.Schema$ThumbnailDetails | undefined
+) {
+  const resolutions = ['maxres', 'high', 'medium', 'default'] as const;
+
+  if (!thumbnails) return '';
+
+  for (const resolution of resolutions) {
+    const thumbnail = thumbnails[resolution];
+    if (thumbnail) return thumbnail.url || '';
+  }
+
+  return '';
+}
+
 export default async function handler(
   req: NextApiRequest,
   res: NextApiResponse<Data>
@@ -38,10 +54,12 @@ export default async function handler(
 
     if (notionTitles.includes(title || '')) return;
 
+    const thumbnailUrl = getThumbnailUrl(item.snippet.thumbnails);
+
     return notion.pages.create({
       parent: { database_id: '22bb63060d624e398960b42c7afb7348' },
       cover: {
-        external: { url: item.snippet.thumbnails?.maxres?.url || '' },
+        external: { url: thumbnailUrl },
       },
       properties: {
         Title: { title: [{ text: { content: item.snippet.title || '' } }] },
