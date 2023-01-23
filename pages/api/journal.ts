@@ -1,5 +1,6 @@
 import { notion } from '@src/sdks/notion';
 import { supabase } from '@src/sdks/supabase';
+import { notionUtils } from '@src/utils/notion';
 import { NextApiRequest, NextApiResponse } from 'next';
 
 type Result = {
@@ -39,6 +40,16 @@ export default async function handler(
     return payload;
   });
 
+  const promises = values.map(async (value) => {
+    const data = await notionUtils.getBlock(value.id);
+    return {
+      id: value.id,
+      data,
+    };
+  });
+
+  const pages = await Promise.all(promises);
+  await supabase.from('pages').upsert(pages);
   await supabase.from('journal').upsert(values);
 
   res.end();
